@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Socket IO - Client</title>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+        body {
+            height: 100vh;
+            padding: 0;
+            margin: 0;
+            font-family: "Montserrat", sans-serif !important;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #messages {
+            width: 80%;
+            height: 80% !important;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            row-gap: 5px;
+        }
+
+        .message {
+            background-color: #e7e7e7;
+            padding: 1rem;
+            border-radius: 0.25rem;
+        }
+
+        .input-wrapper {
+            width: 80%;
+            padding: 1rem;
+            background-color: #e7e7e7;
+            border-radius: 0.25rem;
+            display: grid;
+            grid-template-columns: 1.75fr 0.25fr;
+            grid-template-rows: 1fr;
+            grid-gap: 5px;
+        }
+
+        .input-wrapper input {
+            padding: 1rem;
+            border: 0;
+            border-radius: 0.25rem;
+            outline: none;
+            background-color: #fff;
+            font-family: "Montserrat", sans-serif !important;
+        }
+
+        .input-wrapper button {
+            cursor: pointer;
+            padding: 1rem;
+            border: 0;
+            border-radius: 0.25rem;
+            outline: none;
+            background-color: #fff;
+            font-family: "Montserrat", sans-serif !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="messages"></div>
+    <div class="input-wrapper">
+        <input type="text" placeholder="Message..." id="messageInput">
+        <button id="sendButton">Send</button>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
+    <script>
+        var socket = io();
+
+        var sendButton = document.getElementById('sendButton');
+        var messageInput = document.getElementById('messageInput');
+        var messages = document.getElementById('messages');
+
+        messageInput.addEventListener('keypress', function (e) {
+            if(e.keyCode === 13) {
+                sendButton.click();
+            }
+        })
+
+        sendButton.addEventListener('click', function (e) {
+            if (messageInput.value) {
+                socket.emit('sendMessage', messageInput.value);
+                messageInput.value = '';
+            } else {
+                alert("Type a message!");
+            }
+        });
+
+        socket.on('sendMessage', function (msg) {
+            var newMessage = document.createElement('div');
+            newMessage.classList.add('message')
+            newMessage.innerText = msg;
+            messages.appendChild(newMessage);
+            window.scrollTo(0, document.body.scrollHeight);
+        });
+    </script>
+</body>
+
+</html>
